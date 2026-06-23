@@ -211,6 +211,19 @@ pub fn definitions_for_attribute<'db>(
     model: &SemanticModel<'db>,
     attribute: &ast::ExprAttribute,
 ) -> Vec<ResolvedDefinition<'db>> {
+    definitions_for_attribute_with_alias_resolution(
+        model,
+        attribute,
+        ImportAliasResolution::ResolveAliases,
+    )
+}
+
+/// Returns all resolved definitions for `x.y`, preserving or resolving import aliases as requested.
+pub fn definitions_for_attribute_with_alias_resolution<'db>(
+    model: &SemanticModel<'db>,
+    attribute: &ast::ExprAttribute,
+    alias_resolution: ImportAliasResolution,
+) -> Vec<ResolvedDefinition<'db>> {
     let db = model.db();
     let name_str = attribute.attr.as_str();
 
@@ -245,7 +258,7 @@ pub fn definitions_for_attribute<'db>(
                         db,
                         def,
                         Some(name_str),
-                        ImportAliasResolution::ResolveAliases,
+                        alias_resolution,
                     ));
                 }
             }
